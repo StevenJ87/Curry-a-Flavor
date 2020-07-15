@@ -41,7 +41,19 @@ app.get("/api/tables", function(req, res) {
 app.get("/api/waitlist", function(req, res) {
     res.sendFile(path.join(__dirname, "waitlist.json"));
   });
+
+// Displays api clear
+app.post("/api/clear", function(req, res) {
+
+  let newTable = [];
+
+
+  //Writes the JSON data back to db.json
+fs.writeFileSync("tables.json", JSON.stringify(newTable));
+res.json(newTable);
   
+});
+
 
 //Post API to save JSON data====================================================
 app.post("/api/tables", function(req, res) {
