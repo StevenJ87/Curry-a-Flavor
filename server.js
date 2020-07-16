@@ -13,6 +13,8 @@ app.use(express.json());
 app.use(express.static('public'));
 
 
+let table = JSON.parse(fs.readFileSync("tables.json", "utf8"));
+let waitlist = JSON.parse(fs.readFileSync("waitlist.json", "utf8"));
 
 // Routes
 // =============================================================
@@ -37,20 +39,15 @@ app.get("/api/tables", function(req, res) {
     res.sendFile(path.join(__dirname, "tables.json"));
   });
   
-// Displays api waitlist
-app.get("/api/waitlist", function(req, res) {
-    res.sendFile(path.join(__dirname, "waitlist.json"));
-  });
-
 // Displays api clear
 app.post("/api/clear", function(req, res) {
 
-  let newTable = [];
+  table = [];
 
 
   //Writes the JSON data back to db.json
-fs.writeFileSync("tables.json", JSON.stringify(newTable));
-res.json(newTable);
+fs.writeFileSync("tables.json", JSON.stringify(table));
+res.json(table);
   
 });
 
@@ -59,13 +56,19 @@ res.json(newTable);
 app.post("/api/tables", function(req, res) {
 
     // Parses through the object
-  let table = JSON.parse(fs.readFileSync("tables.json", "utf8"));
-  
-  //Add the new note to the array
-  let newTable = req.body;
-  table.push(newTable);
   
 
+  if(table.length < 5){
+
+    table.push(req.body);
+    res.json(true);
+  }
+  else{
+
+    waitlist.push(req.body);
+    res.json(false);
+  }
+  
   
 //Writes the JSON data back to db.json
 fs.writeFileSync("tables.json", JSON.stringify(table));
@@ -73,22 +76,9 @@ res.json(table);
   })
 
 //Get JSON data from waitlist=========================================
-app.post("/api/waitlist", function(req, res) {
-
-    // Parses through the object
-  let waitlist = JSON.parse(fs.readFileSync("waitlist.json", "utf8"));
-  
-  //Add the new note to the array
-  let newWaitlist = req.body;
-  waitlist.push(newWaitlist);
-  
-
-  
-//Writes the JSON data back to db.json
-fs.writeFileSync("waitlist.json", JSON.stringify(waitlist));
-res.json(waitlist);
-})
-
+app.get("/api/waitlist", function(req, res) {
+  res.json(waitlist);
+});
 
 
 
