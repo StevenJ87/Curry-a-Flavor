@@ -42,8 +42,8 @@ app.get("/api/tables", function(req, res) {
 // Displays api clear
 app.post("/api/clear", function(req, res) {
 
-  table = [];
-
+  table.shift();
+  table.push(waitlist.shift())
 
   //Writes the JSON data back to db.json
 fs.writeFileSync("tables.json", JSON.stringify(table));
